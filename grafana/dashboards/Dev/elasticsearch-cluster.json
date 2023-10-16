@@ -2385,6 +2385,6 @@
   "timezone": "utc",
   "title": "Elasticsearch Cluster",
   "uid": "d4f826fb-865f-474b-a372-6696071fb709",
-  "version": 8,
+  "version": 10,
   "weekStart": ""
 }

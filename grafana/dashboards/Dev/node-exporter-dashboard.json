@@ -96,7 +96,7 @@
       "description": "Partition utilization, disk read, disk write, download bandwidth, upload bandwidth, if there are multiple network cards or multiple partitions, it is the value of the network card or partition with the highest utilization rate collected.\n\nCurrEstab: The number of TCP connections whose current status is ESTABLISHED or CLOSE-WAIT.",
       "fontSize": "80%",
       "gridPos": {
-        "h": 7,
+        "h": 9,
         "w": 24,
         "x": 0,
         "y": 1
@@ -104,8 +104,8 @@
       "id": 185,
       "showHeader": true,
       "sort": {
-        "col": 16,
-        "desc": true
+        "col": 2,
+        "desc": false
       },
       "styles": [
         {
@@ -202,7 +202,7 @@
         },
         {
           "$$hashKey": "object:1605",
-          "alias": "Part used%",
+          "alias": "Disk used%",
           "align": "auto",
           "colorMode": "cell",
           "colors": [
@@ -214,10 +214,7 @@
           "decimals": 2,
           "mappingType": 1,
           "pattern": "Value #E",
-          "thresholds": [
-            "70",
-            "85"
-          ],
+          "thresholds": ["70", "85"],
           "type": "number",
           "unit": "percent"
         },
@@ -235,10 +232,7 @@
           "decimals": 2,
           "mappingType": 1,
           "pattern": "Value #F",
-          "thresholds": [
-            "70",
-            "85"
-          ],
+          "thresholds": ["70", "85"],
           "type": "number",
           "unit": "percent"
         },
@@ -256,10 +250,7 @@
           "decimals": 2,
           "mappingType": 1,
           "pattern": "Value #G",
-          "thresholds": [
-            "70",
-            "85"
-          ],
+          "thresholds": ["70", "85"],
           "type": "number",
           "unit": "percent"
         },
@@ -277,10 +268,7 @@
           "decimals": 2,
           "mappingType": 1,
           "pattern": "Value #H",
-          "thresholds": [
-            "10485760",
-            "20485760"
-          ],
+          "thresholds": ["10485760", "20485760"],
           "type": "number",
           "unit": "Bps"
         },
@@ -298,10 +286,7 @@
           "decimals": 2,
           "mappingType": 1,
           "pattern": "Value #I",
-          "thresholds": [
-            "10485760",
-            "20485760"
-          ],
+          "thresholds": ["10485760", "20485760"],
           "type": "number",
           "unit": "Bps"
         },
@@ -319,10 +304,7 @@
           "decimals": 2,
           "mappingType": 1,
           "pattern": "Value #J",
-          "thresholds": [
-            "30485760",
-            "104857600"
-          ],
+          "thresholds": ["30485760", "104857600"],
           "type": "number",
           "unit": "bps"
         },
@@ -340,10 +322,7 @@
           "decimals": 2,
           "mappingType": 1,
           "pattern": "Value #K",
-          "thresholds": [
-            "30485760",
-            "104857600"
-          ],
+          "thresholds": ["30485760", "104857600"],
           "type": "number",
           "unit": "bps"
         },
@@ -378,16 +357,13 @@
           "decimals": 2,
           "mappingType": 1,
           "pattern": "Value #M",
-          "thresholds": [
-            "1000",
-            "1500"
-          ],
+          "thresholds": ["1000", "1500"],
           "type": "string",
           "unit": "short"
         },
         {
           "$$hashKey": "object:1614",
-          "alias": "TCP_tw",
+          "alias": "TCP_timewait",
           "align": "center",
           "colorMode": "cell",
           "colors": [
@@ -396,12 +372,10 @@
             "rgba(245, 54, 54, 0.9)"
           ],
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "link": false,
           "mappingType": 1,
           "pattern": "Value #N",
-          "thresholds": [
-            "5000",
-            "20000"
-          ],
+          "thresholds": ["5000", "20000"],
           "type": "number",
           "unit": "short"
         },
@@ -427,11 +401,12 @@
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
+          "editorMode": "code",
           "expr": "node_uname_info{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\"} - 0",
           "format": "table",
           "instant": true,
           "interval": "",
-          "legendFormat": "主机名",
+          "legendFormat": "__auto",
           "refId": "A"
         },
         {
@@ -439,12 +414,13 @@
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
+          "editorMode": "code",
           "expr": "sum(time() - node_boot_time_seconds{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\"})by(instance)",
           "format": "table",
           "hide": false,
           "instant": true,
           "interval": "",
-          "legendFormat": "运行时间",
+          "legendFormat": "__auto",
           "refId": "D"
         },
         {
@@ -452,12 +428,13 @@
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
+          "editorMode": "code",
           "expr": "node_memory_MemTotal_bytes{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\"} - 0",
           "format": "table",
           "hide": false,
           "instant": true,
           "interval": "",
-          "legendFormat": "总内存",
+          "legendFormat": "__auto",
           "refId": "B"
         },
         {
@@ -465,12 +442,13 @@
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
+          "editorMode": "code",
           "expr": "count(node_cpu_seconds_total{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\",mode='system'}) by (instance)",
           "format": "table",
           "hide": false,
           "instant": true,
           "interval": "",
-          "legendFormat": "总核数",
+          "legendFormat": "__auto",
           "refId": "C"
         },
         {
@@ -478,11 +456,12 @@
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
+          "editorMode": "code",
           "expr": "node_load5{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\"}",
           "format": "table",
           "instant": true,
           "interval": "",
-          "legendFormat": "5分钟负载",
+          "legendFormat": "__auto",
           "refId": "L"
         },
         {
@@ -490,12 +469,13 @@
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
-          "expr": "(1 - avg(rate(node_cpu_seconds_total{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\",mode=\"idle\"}[$interval])) by (instance)) * 100",
+          "editorMode": "code",
+          "expr": "100 - avg(rate(node_cpu_seconds_total{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\",mode=\"idle\"}[1m])) by (instance) * 100",
           "format": "table",
           "hide": false,
           "instant": true,
           "interval": "",
-          "legendFormat": "CPU使用率",
+          "legendFormat": "__auto",
           "refId": "F"
         },
         {
@@ -503,13 +483,14 @@
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "(node_memory_Buffers_bytes{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\"}+\nnode_memory_Cached_bytes{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\"}) / node_memory_MemTotal_bytes{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\"} * 100",
+          "expr": "(node_memory_Buffers_bytes{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\"} + node_memory_Cached_bytes{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\"}) / node_memory_MemTotal_bytes{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\"} * 100",
           "format": "table",
           "hide": false,
           "instant": true,
           "interval": "",
-          "legendFormat": "内存使用率",
+          "legendFormat": "__auto",
           "refId": "G"
         },
         {
@@ -517,12 +498,13 @@
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
-          "expr": "max((node_filesystem_size_bytes{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\",fstype=~\"ext.?|xfs\"}-node_filesystem_free_bytes{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\",fstype=~\"ext.?|xfs\"}) *100/(node_filesystem_avail_bytes {origin_prometheus=~\"$origin_prometheus\",job=~\"$job\",fstype=~\"ext.?|xfs\"}+(node_filesystem_size_bytes{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\",fstype=~\"ext.?|xfs\"}-node_filesystem_free_bytes{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\",fstype=~\"ext.?|xfs\"})))by(instance)",
+          "editorMode": "code",
+          "expr": "max(100 - ((node_filesystem_avail_bytes{fstype=~\"ext4|ext3|xfs\"} * 100) / node_filesystem_size_bytes{fstype=~\"ext4|ext3|xfs\"})) by(instance)",
           "format": "table",
           "hide": false,
           "instant": true,
           "interval": "",
-          "legendFormat": "分区使用率",
+          "legendFormat": "__auto",
           "refId": "E"
         },
         {
@@ -530,12 +512,13 @@
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
+          "editorMode": "code",
           "expr": "max(rate(node_disk_read_bytes_total{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\"}[$interval])) by (instance)",
           "format": "table",
           "hide": false,
           "instant": true,
           "interval": "",
-          "legendFormat": "最大读取",
+          "legendFormat": "__auto",
           "refId": "H"
         },
         {
@@ -543,12 +526,13 @@
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
+          "editorMode": "code",
           "expr": "max(rate(node_disk_written_bytes_total{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\"}[$interval])) by (instance)",
           "format": "table",
           "hide": false,
           "instant": true,
           "interval": "",
-          "legendFormat": "最大写入",
+          "legendFormat": "__auto",
           "refId": "I"
         },
         {
@@ -556,12 +540,13 @@
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
+          "editorMode": "code",
           "expr": "node_netstat_Tcp_CurrEstab{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\"} - 0",
           "format": "table",
           "hide": false,
           "instant": true,
           "interval": "",
-          "legendFormat": "连接数",
+          "legendFormat": "__auto",
           "refId": "M"
         },
         {
@@ -582,12 +567,13 @@
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
+          "editorMode": "code",
           "expr": "max(rate(node_network_receive_bytes_total{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\"}[$interval])*8) by (instance)",
           "format": "table",
           "hide": false,
           "instant": true,
           "interval": "",
-          "legendFormat": "下载带宽",
+          "legendFormat": "__auto",
           "refId": "J"
         },
         {
@@ -595,12 +581,13 @@
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
+          "editorMode": "code",
           "expr": "max(rate(node_network_transmit_bytes_total{origin_prometheus=~\"$origin_prometheus\",job=~\"$job\"}[$interval])*8) by (instance)",
           "format": "table",
           "hide": false,
           "instant": true,
           "interval": "",
-          "legendFormat": "上传带宽",
+          "legendFormat": "__auto",
           "refId": "K"
         }
       ],
@@ -644,7 +631,7 @@
         "h": 7,
         "w": 8,
         "x": 0,
-        "y": 8
+        "y": 10
       },
       "hiddenSeries": false,
       "id": 191,
@@ -805,7 +792,7 @@
         "h": 7,
         "w": 8,
         "x": 8,
-        "y": 8
+        "y": 10
       },
       "height": "300",
       "hiddenSeries": false,
@@ -956,7 +943,7 @@
         "h": 7,
         "w": 8,
         "x": 16,
-        "y": 8
+        "y": 10
       },
       "hiddenSeries": false,
       "id": 197,
@@ -1092,7 +1079,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 15
+        "y": 17
       },
       "id": 189,
       "panels": [
@@ -1152,9 +1139,7 @@
             "justifyMode": "auto",
             "orientation": "horizontal",
             "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
+              "calcs": ["lastNotNull"],
               "fields": "",
               "values": false
             },
@@ -1236,9 +1221,7 @@
             "displayMode": "lcd",
             "orientation": "horizontal",
             "reduceOptions": {
-              "calcs": [
-                "last"
-              ],
+              "calcs": ["last"],
               "fields": "",
               "values": false
             },
@@ -1350,9 +1333,7 @@
               "decimals": 2,
               "mappingType": 1,
               "pattern": "mountpoint",
-              "thresholds": [
-                ""
-              ],
+              "thresholds": [""],
               "type": "string",
               "unit": "bytes"
             },
@@ -1370,10 +1351,7 @@
               "decimals": 1,
               "mappingType": 1,
               "pattern": "Value #A",
-              "thresholds": [
-                "10000000000",
-                "20000000000"
-              ],
+              "thresholds": ["10000000000", "20000000000"],
               "type": "number",
               "unit": "bytes"
             },
@@ -1391,10 +1369,7 @@
               "decimals": 1,
               "mappingType": 1,
               "pattern": "Value #B",
-              "thresholds": [
-                "70",
-                "85"
-              ],
+              "thresholds": ["70", "85"],
               "type": "number",
               "unit": "percent"
             },
@@ -1577,9 +1552,7 @@
             "justifyMode": "auto",
             "orientation": "horizontal",
             "reduceOptions": {
-              "calcs": [
-                "last"
-              ],
+              "calcs": ["last"],
               "fields": "",
               "values": false
             },
@@ -1795,9 +1768,7 @@
             "justifyMode": "auto",
             "orientation": "horizontal",
             "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
+              "calcs": ["lastNotNull"],
               "fields": "",
               "values": false
             },
@@ -1878,9 +1849,7 @@
             "justifyMode": "auto",
             "orientation": "horizontal",
             "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
+              "calcs": ["lastNotNull"],
               "fields": "",
               "values": false
             },
@@ -1962,9 +1931,7 @@
             "justifyMode": "auto",
             "orientation": "horizontal",
             "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
+              "calcs": ["lastNotNull"],
               "fields": "",
               "values": false
             },
@@ -2045,9 +2012,7 @@
             "justifyMode": "auto",
             "orientation": "horizontal",
             "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
+              "calcs": ["lastNotNull"],
               "fields": "",
               "values": false
             },
@@ -4501,8 +4466,8 @@
       {
         "current": {
           "selected": false,
-          "text": "4",
-          "value": "4"
+          "text": "5",
+          "value": "5"
         },
         "datasource": {
           "type": "prometheus",
@@ -4537,29 +4502,12 @@
   "timepicker": {
     "hidden": false,
     "now": true,
-    "refresh_intervals": [
-      "15s",
-      "30s",
-      "1m",
-      "5m",
-      "15m",
-      "30m"
-    ],
-    "time_options": [
-      "5m",
-      "15m",
-      "1h",
-      "6h",
-      "12h",
-      "24h",
-      "2d",
-      "7d",
-      "30d"
-    ]
+    "refresh_intervals": ["15s", "30s", "1m", "5m", "15m", "30m"],
+    "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]
   },
   "timezone": "browser",
   "title": "Node Exporter Dashboard",
   "uid": "W5KDrdKnz",
-  "version": 2,
+  "version": 8,
   "weekStart": ""
 }
