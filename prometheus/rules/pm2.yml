@@ -1,0 +1,20 @@
+---
+groups:
+  - name: PM2
+    rules:
+      - alert: PM2MetricsHighRestartRate
+        expr: pm2_restart_total{job="pm2-metrics"} > 5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "PM2 Metrics has a high restart rate"
+          description: "The PM2 Metrics job is experiencing a high rate of process restarts (>5 in 5 minutes)."
+      - alert: PM2NodeDown
+        expr: sum(pm2_up) without(__name__,Time,exported_instance,job)==0
+        for: 10s
+        labels:
+          severity: critical
+        annotations:
+          summary: "PM2 instance of {{ $labels.instance }} down"
+          description: "The PM2 node `{{ $labels.name }}` of job {{ $labels.instance }} has been down for more than 10 seconds."

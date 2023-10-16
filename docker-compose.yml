@@ -1,0 +1,296 @@
+version: "3.3"
+
+services:
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      # - 172.17.0.1:3002:3000
+      - 3002:3000
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GF_SECURITY_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD:-admin}
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - "./grafana/grafana-storage:/var/lib/grafana"
+      - "./grafana/dashboards:/var/lib/grafana/dashboards"
+      - "./grafana:/etc/grafana/provisioning/datasources"
+      - "./grafana/dashboard.yaml:/etc/grafana/provisioning/dashboards/main.yaml"
+      - "./grafana/grafana-config/grafana.ini:/etc/grafana/grafana.ini"
+    restart: unless-stopped
+    networks:
+      - monitor-net
+    labels:
+      org.label-schema.group: "monitoring"
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - 9090:9090
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--web.config.file=/etc/prometheus/web.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries=/etc/prometheus/console_libraries"
+      - "--web.console.templates=/etc/prometheus/consoles"
+      - "--storage.tsdb.retention.time=200h"
+      - "--web.enable-lifecycle"
+    volumes:
+      - "./prometheus:/etc/prometheus"
+      - "prometheus_data:/prometheus"
+    restart: unless-stopped
+    depends_on:
+      - mongodb_exporter
+      - mysqld_exporter_master
+      - mysqld_exporter_slave
+      - elasticsearch_exporter_1
+      - elasticsearch_exporter_2
+      - alertmanager
+      - pushgateway
+      - blackbox_exporter
+      - redis_exporter_1
+      # - redis_exporter_2
+      # - redis_exporter_3
+      # - redis_exporter_4
+      - postgres_exporter
+      - node_exporter_1
+      - cadvisor
+    networks:
+      - monitor-net
+    labels:
+      org.label-schema.group: "monitoring"
+
+  pushgateway:
+    image: prom/pushgateway:latest
+    container_name: pushgateway
+    restart: unless-stopped
+    expose:
+      - 9091
+    ports:
+      - 9091:9091
+    networks:
+      - monitor-net
+    labels:
+      org.label-schema.group: "monitoring"
+
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: alertmanager
+    volumes:
+      - ./alertmanager:/etc/alertmanager
+    command:
+      - "--config.file=/etc/alertmanager/config.yml"
+      - "--storage.path=/alertmanager"
+    restart: unless-stopped
+    expose:
+      - 9093
+    ports:
+      - 9093:9093
+    networks:
+      - monitor-net
+    labels:
+      org.label-schema.group: "monitoring"
+
+  blackbox_exporter:
+    image: prom/blackbox-exporter:latest
+    container_name: blackbox_exporter
+    expose:
+      - 9115
+    command: --config.file=/etc/blackbox/blackbox.yml
+    volumes:
+      - ./blackbox:/etc/blackbox
+    restart: unless-stopped
+    networks:
+      - monitor-net
+    labels:
+      org.label-schema.group: "monitoring"
+
+  mongodb_exporter:
+    image: bitnami/mongodb-exporter:latest
+    container_name: mongodb_exporter
+    expose:
+      - 9216
+    command:
+      - --mongodb.uri=${MONGODB_URI}
+      - --mongodb.direct-connect=true
+      - --collect-all=true
+    restart: unless-stopped
+    networks:
+      - monitor-net
+    labels:
+      org.label-schema.group: "monitoring"
+
+  mysqld_exporter_master:
+    image: prom/mysqld-exporter:latest
+    container_name: mysqld_exporter_master
+    expose:
+      - 9104
+    command:
+      - --mysqld.username=${MYSQL_USERNAME}:${MYSQL_PASSWORD}
+      - --mysqld.address=${MYSQL_HOST_MASTER}
+    restart: unless-stopped
+    networks:
+      - monitor-net
+    labels:
+      org.label-schema.group: "monitoring"
+
+  mysqld_exporter_slave:
+    image: prom/mysqld-exporter:latest
+    container_name: mysqld_exporter_slave
+    expose:
+      - 9104
+    command:
+      - --mysqld.username=${MYSQL_USERNAME}:${MYSQL_PASSWORD}
+      - --mysqld.address=${MYSQL_HOST_SLAVE}
+    restart: unless-stopped
+    networks:
+      - monitor-net
+    labels:
+      org.label-schema.group: "monitoring"
+
+  elasticsearch_exporter_1:
+    image: quay.io/prometheuscommunity/elasticsearch-exporter:latest
+    container_name: elasticsearch_exporter_1
+    command:
+      - "--es.uri=${ELASTICSEARCH_EXPORTER_URL_1}"
+      - "--es.all"
+      - "--es.indices"
+      - "--es.indices_settings"
+      - "--es.indices_mappings"
+    restart: unless-stopped
+    expose:
+      - 9114
+    networks:
+      - monitor-net
+    labels:
+      org.label-schema.group: "monitoring"
+
+  elasticsearch_exporter_2:
+    image: quay.io/prometheuscommunity/elasticsearch-exporter:latest
+    container_name: elasticsearch_exporter_2
+    command:
+      - "--es.uri=${ELASTICSEARCH_EXPORTER_URL_2}"
+      - "--es.all"
+      - "--es.indices"
+      - "--es.indices_settings"
+      - "--es.indices_mappings"
+    restart: unless-stopped
+    expose:
+      - 9114
+    networks:
+      - monitor-net
+    labels:
+      org.label-schema.group: "monitoring"
+
+  redis_exporter_1:
+    image: oliver006/redis_exporter:latest
+    container_name: redis_exporter_1
+    expose:
+      - 9121
+    environment:
+      - REDIS_ADDR=${REDIS_EXPORTER_ADDR_1}
+    restart: unless-stopped
+    networks:
+      - monitor-net
+    labels:
+      org.label-schema.group: "monitoring"
+
+  # redis_exporter_2:
+  #   image: oliver006/redis_exporter:latest
+  #   container_name: redis_exporter_2
+  #   expose:
+  #     - 9121
+  #   environment:
+  #     - REDIS_ADDR=${REDIS_EXPORTER_ADDR_2}
+  #   restart: unless-stopped
+  #   networks:
+  #     - monitor-net
+  #   labels:
+  #     org.label-schema.group: "monitoring"
+
+  # redis_exporter_3:
+  #   image: oliver006/redis_exporter:latest
+  #   container_name: redis_exporter_3
+  #   expose:
+  #     - 9121
+  #   environment:
+  #     - REDIS_ADDR=${REDIS_EXPORTER_ADDR_3}
+  #   restart: unless-stopped
+  #   networks:
+  #     - monitor-net
+  #   labels:
+  #     org.label-schema.group: "monitoring"
+
+  # redis_exporter_4:
+  #   image: oliver006/redis_exporter:latest
+  #   container_name: redis_exporter_4
+  #   expose:
+  #     - 9121
+  #   environment:
+  #     - REDIS_ADDR=${REDIS_EXPORTER_ADDR_4}
+  #   restart: unless-stopped
+  #   networks:
+  #     - monitor-net
+  #   labels:
+  #     org.label-schema.group: "monitoring"
+
+  postgres_exporter:
+    image: wrouesnel/postgres_exporter:latest
+    container_name: postgres_exporter
+    restart: unless-stopped
+    expose:
+      - 9187
+    environment:
+      - DATA_SOURCE_NAME=${POSTGRES_EXPORTER_URL}
+    networks:
+      - monitor-net
+    labels:
+      org.label-schema.group: "monitoring"
+
+  node_exporter_1:
+    image: quay.io/prometheus/node-exporter:latest
+    container_name: node_exporter_1
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - "--path.procfs=/host/proc"
+      - "--path.rootfs=/rootfs"
+      - "--path.sysfs=/host/sys"
+      - "--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)"
+    expose:
+      - 9100
+    networks:
+      - monitor-net
+    restart: unless-stopped
+    labels:
+      org.label-schema.group: "monitoring"
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    privileged: true
+    devices:
+      - /dev/kmsg:/dev/kmsg
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /cgroup:/cgroup:ro
+    expose:
+      - 8080
+    networks:
+      - monitor-net
+    restart: unless-stopped
+    labels:
+      org.label-schema.group: "monitoring"
+
+volumes:
+  prometheus_data: {}
+
+networks:
+  monitor-net:
+    driver: "bridge"

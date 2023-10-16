@@ -1,0 +1,4 @@
+# Prometheus auth MD5: admin/...
+
+# basic_auth_users:
+#   admin:

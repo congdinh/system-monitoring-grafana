@@ -1,0 +1,181 @@
+# My global config
+global:
+  scrape_interval: 30s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  evaluation_interval: 30s # Evaluate rules every 15 seconds. The default is every 1 minute.
+  # scrape_timeout is set to the global default (10s).
+
+  # Attach these labels to any time series or alerts when communicating with
+  # external systems (federation, remote storage, Alertmanager).
+  external_labels:
+    monitor: "dev-monitoring"
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+  - "rules/*.yml"
+
+# Use this for alerting service
+alerting:
+  alertmanagers:
+    - scheme: http
+      static_configs:
+        - targets:
+            - "alertmanager:9093"
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  # PROMETHEUS
+  - job_name: prometheus
+    # basic_auth:
+    #   username: "admin"
+    #   password: ""
+    static_configs:
+      - targets: ["prometheus:9090"]
+
+  # PUSH GATEWAY
+  - job_name: pushgateway
+    scrape_interval: 30s
+    honor_labels: true
+    static_configs:
+      - targets:
+          - pushgateway:9091
+
+  # MONGODB
+  - job_name: mongodb
+    static_configs:
+      - targets:
+          - "mongodb_exporter:9216"
+    relabel_configs:
+      - source_labels: [__address__]
+        regex: mongodb_exporter:9216
+        target_label: instance
+        replacement: "mongodb"
+
+  # MYSQL
+  - job_name: mysql
+    static_configs:
+      - targets:
+          - mysqld_exporter_master:9104
+          - mysqld_exporter_slave:9104
+    relabel_configs:
+      - source_labels: [__address__]
+        regex: (mysqld_exporter_master:9104)
+        target_label: instance
+        replacement: "mysql-master"
+      - source_labels: [__address__]
+        regex: (mysqld_exporter_slave:9104)
+        target_label: instance
+        replacement: "mysql-slave"
+
+  # ELASTICSEARCH
+  - job_name: elasticsearch
+    static_configs:
+      - targets:
+          - "elasticsearch_exporter_1:9114"
+          - "elasticsearch_exporter_2:9114"
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        regex: (elasticsearch_exporter_1:9114)
+        replacement: "elasticsearch-all-data"
+      - source_labels: [__address__]
+        target_label: instance
+        regex: (elasticsearch_exporter_2:9114)
+        replacement: "elasticsearch-log"
+
+  # NODE_EXPORTER
+  - job_name: node
+    static_configs:
+      - targets:
+          - "127.0.0.1:9100"
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        regex: (127.0.0.1:9100)
+        replacement: "backend-server"
+
+  # BLACKBOX HTTP CHECK
+  - job_name: "blackbox"
+    metrics_path: /probe
+    static_configs:
+      - targets:
+          - https://vnexpress.net
+          - https://www.vercel-status.com
+          - https://www.apollographql.com/graphql
+    params:
+      module: [http_2xx]
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - source_labels: [__address__]
+        target_label: instance
+        regex: (https://www.apollographql.com/graphql)
+        replacement: "apollo-service"
+      - target_label: __address__
+        replacement: "blackbox_exporter:9115"
+
+  # PM2 Monitoring
+  - job_name: pm2-metrics
+    metrics_path: /metrics
+    scheme: http
+    static_configs:
+      - targets:
+          - 127.0.0.1:9209
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        regex: (127.0.0.1:9209)
+        replacement: "dev-pm2"
+
+  # REDIS
+  - job_name: redis
+    static_configs:
+      - targets:
+          - "redis_exporter_1:9121"
+          # - "redis_exporter_2:9121"
+          # - "redis_exporter_3:9121"
+          # - "redis_exporter_4:9121"
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        regex: "redis_exporter_1:9121"
+        replacement: "redis_cache_1"
+      # - source_labels: [__address__]
+      #   target_label: instance
+      #   regex: "redis_exporter_2:9121"
+      #   replacement: "redis_cache_2"
+      # - source_labels: [__address__]
+      #   target_label: instance
+      #   regex: "redis_exporter_3:9121"
+      #   replacement: "redis_cache_3"
+      # - source_labels: [__address__]
+      #   target_label: instance
+      #   regex: "redis_exporter_4:9121"
+      #   replacement: "redis_cache_4"
+
+  # POSTGRES
+  - job_name: postgres_exporter
+    static_configs:
+      - targets:
+          - "postgresql_exporter:9187"
+
+  # CADVISOR DOCKER MONITOR
+  - job_name: "cadvisor"
+    static_configs:
+      - targets:
+          - "cadvisor:8080"
+
+  #   # SERVICE HEALTH
+  # - job_name: "node"
+  #   static_configs:
+  #     - targets:
+  #         - "127.0.0.1:9001"
+
+  # - job_name: "service-health-check"
+  #   metrics_path: "/healthcheck"
+  #   tls_config:
+  #     insecure_skip_verify: true
+  #   static_configs:
+  #     - targets: ["127.0.0.1:9001"]

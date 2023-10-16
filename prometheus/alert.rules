@@ -1,0 +1,97 @@
+groups:
+  - name: AlertingCenter
+    rules:
+      - alert: HighCPUUsage
+        expr: 100 - (avg by (instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 90
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU Usage Detected"
+          description: "The average CPU usage is over 90% for the last 5 minutes."
+
+      - alert: HighMemoryUsage
+        expr: (node_memory_MemTotal - node_memory_MemFree - node_memory_Buffers - node_memory_Cached) / node_memory_MemTotal * 100 > 90
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High Memory Usage Detected"
+          description: "The memory usage is over 90% for the last 5 minutes."
+
+      - alert: MongodbReplicationLag
+        expr: mongodb_replset_member_healthy{job="mongodb_exporter"} == 0
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Mongodb Replication Lag"
+          description: "There are unhealthy members in the MongoDB replica set."
+
+      # - alert: RedisHighMemoryUsage
+      #   expr: redis_memory_used_bytes / redis_memory_max_bytes * 100 > 90
+      #   for: 5m
+      #   labels:
+      #     severity: warning
+      #   annotations:
+      #     summary: "High Redis Memory Usage"
+      #     description: "The Redis instance is using over 90% of its available memory."
+
+      - alert: MySQLQueryLatency
+        expr: rate(mysql_slow_queries_total[5m]) > 1
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High MySQL Query Latency"
+          description: "The MySQL server has high query latency."
+
+      # - alert: ElasticsearchClusterRed
+      #   expr: elasticsearch_cluster_health_status{job="elasticsearch_exporter"} == "red"
+      #   for: 5m
+      #   labels:
+      #     severity: critical
+      #   annotations:
+      #     summary: "Elasticsearch Cluster in Red State"
+      #     description: "The Elasticsearch cluster health status is 'red' indicating critical issues."
+
+      # - alert: PostgreSQLConnectionErrors
+      #   expr: postgresql_up == 0
+      #   for: 5m
+      #   labels:
+      #     severity: warning
+      #   annotations:
+      #     summary: "PostgreSQL Connection Errors"
+      #     description: "The PostgreSQL exporter is unable to connect to the PostgreSQL server."
+
+      - alert: InstanceDown
+        # Condition for alerting
+        expr: up == 0
+        for: 5s
+        # Annotation - additional informational labels to store more information
+        annotations:
+          title: "Instance {{ $labels.instance }} down"
+          description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 5 seconds."
+        # Labels - additional labels to be attached to the alert
+        labels:
+          severity: "critical"
+
+      - alert: BlackboxProbeFailed
+        expr: probe_success == 0
+        for: 5s
+        annotations:
+          summary: "Blackbox probe failed"
+          title: "Healthcheck {{ $labels.instance }} down"
+          description: "The Blackbox Exporter failed to probe a target URL: {{ $labels.instance }} of job {{ $labels.job }} has been down for more than 5 seconds."
+        labels:
+          severity: critical
+
+      - alert: PM2NodeDown
+        expr: sum(pm2_up) without(__name__,Time,exported_instance,job)==0
+        for: 10s
+        labels:
+          severity: critical
+        annotations:
+          summary: "PM2 node is down"
+          title: "PM2 instance {{ $labels.instance }} down"
+          description: "The PM2 node '{{ $labels.instance }}' of job {{ $labels.job }} has been down for more than 10 seconds."

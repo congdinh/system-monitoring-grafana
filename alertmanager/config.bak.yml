@@ -1,0 +1,91 @@
+# route:
+#     receiver: 'slack'
+
+# receivers:
+#     - name: 'slack'
+#       slack_configs:
+#           - send_resolved: true
+#             text: "{{ .CommonAnnotations.description }}"
+#             username: 'Prometheus'
+#             channel: '#meta-bots'
+#             api_url: 'https://hooks.slack.com/services/'
+
+# Channel metae_bots
+# SLACK_WEBHOOK_URL=https://hooks.slack.com/services/
+
+global:
+  resolve_timeout: 1m
+  slack_api_url: "https://hooks.slack.com/services/"
+
+route:
+  receiver: "slack-notifications"
+
+receivers:
+  - name: "slack-notifications"
+    slack_configs:
+      - channel: "#meta-bots"
+        send_resolved: true
+        icon_emoji: ":rocket:"
+        # icon_url: https://avatars3.githubusercontent.com/u/3380462
+#         title: |-
+#           [{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] {{ .CommonLabels.alertname }} for {{ .CommonLabels.job }}
+#           {{- if gt (len .CommonLabels) (len .GroupLabels) -}}
+#             {{" "}}(
+#             {{- with .CommonLabels.Remove .GroupLabels.Names }}
+#               {{- range $index, $label := .SortedPairs -}}
+#                 {{ if $index }}, {{ end }}
+#                 {{- $label.Name }}="{{ $label.Value -}}"
+#               {{- end }}
+#             {{- end -}}
+#             )
+#           {{- end }}
+#         text: >-
+#           {{ range .Alerts -}}
+#           *Alert:* {{ .Annotations.title }}{{ if .Labels.severity }} - `{{ .Labels.severity }}`{{ end }}
+
+#           *Description:* {{ .Annotations.description }}
+
+#           *Details:*
+#             {{ range .Labels.SortedPairs }} • *{{ .Name }}:* `{{ .Value }}`
+#             {{ end }}
+#           {{ end }}
+
+# title: |-
+#   {{ if eq .Status "firing" }}
+#     :rotating_light: Monitor triggered: {{ .CommonLabels.alertname }}
+#   {{ else }}
+#     :sunglasses: Monitor resolved: {{ .CommonLabels.alertname }}
+#   {{ end }}
+# text: >-
+#   {{ if eq .Status "firing" }}
+#     {{ .CommonAnnotations.summary }}
+#     CPU Utilization Percent is currently at {{ printf "%.2f" .CommonLabels.cpu_utilization }}%, above setting of {{ printf "%.2f" .CommonLabels.threshold }}% for the last 5m
+#   {{ else }}
+#     {{ .CommonAnnotations.summary }}
+#     CPU Utilization Percent has returned to an acceptable level
+#   {{ end }}
+#   Droplet
+#   {{ .CommonLabels.droplet_name }}
+
+#  title: |-
+#    [{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] {{ .CommonLabels.alertname }} for {{ .CommonLabels.job }}
+#    {{- if gt (len .CommonLabels) (len .GroupLabels) -}}
+#      {{" "}}(
+#      {{- with .CommonLabels.Remove .GroupLabels.Names }}
+#        {{- range $index, $label := .SortedPairs -}}
+#          {{ if $index }}, {{ end }}
+#          {{- $label.Name }}="{{ $label.Value -}}"
+#        {{- end }}
+#      {{- end -}}
+#      )
+#    {{- end }}
+# text: >-
+#    {{ range .Alerts -}}
+#    *Alert:* {{ .Annotations.title }}{{ if .Labels.severity }} - `{{ .Labels.severity }}`{{ end }}
+
+#    *Description:* {{ .Annotations.description }}
+
+#    *Details:*
+#      {{ range .Labels.SortedPairs }} • *{{ .Name }}:* `{{ .Value }}`
+#      {{ end }}
+#    {{ end }}
