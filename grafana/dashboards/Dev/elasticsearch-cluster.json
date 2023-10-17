@@ -285,9 +285,12 @@
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
+          "editorMode": "code",
           "expr": "elasticsearch_cluster_health_number_of_data_nodes{cluster=~\"$cluster\"}",
           "format": "time_series",
           "intervalFactor": 1,
+          "legendFormat": "{{instance}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -364,9 +367,12 @@
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
+          "editorMode": "code",
           "expr": "elasticsearch_cluster_health_number_of_pending_tasks{cluster=~\"$cluster\"}",
           "format": "time_series",
           "intervalFactor": 1,
+          "legendFormat": "{{instance}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -466,9 +472,12 @@
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
+          "editorMode": "code",
           "expr": "elasticsearch_cluster_health_active_shards{cluster=~\"$cluster\"}",
           "format": "time_series",
           "intervalFactor": 1,
+          "legendFormat": "{{instance}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -542,9 +551,12 @@
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
+          "editorMode": "code",
           "expr": "elasticsearch_cluster_health_active_primary_shards{cluster=~\"$cluster\"}",
           "format": "time_series",
           "intervalFactor": 1,
+          "legendFormat": "{{instance}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -621,9 +633,12 @@
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
+          "editorMode": "code",
           "expr": "elasticsearch_cluster_health_initializing_shards{cluster=~\"$cluster\"}",
           "format": "time_series",
           "intervalFactor": 1,
+          "legendFormat": "{{instance}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -700,9 +715,12 @@
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
+          "editorMode": "code",
           "expr": "elasticsearch_cluster_health_relocating_shards{cluster=~\"$cluster\"}",
           "format": "time_series",
           "intervalFactor": 1,
+          "legendFormat": "{{instance}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -779,9 +797,12 @@
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
+          "editorMode": "code",
           "expr": "elasticsearch_cluster_health_unassigned_shards{cluster=~\"$cluster\"}",
           "format": "time_series",
           "intervalFactor": 1,
+          "legendFormat": "{{instance}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -858,9 +879,12 @@
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
+          "editorMode": "code",
           "expr": "elasticsearch_cluster_health_delayed_unassigned_shards{cluster=~\"$cluster\"}",
           "format": "time_series",
           "intervalFactor": 1,
+          "legendFormat": "{{instance}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -899,6 +923,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": {
+        "type": "prometheus",
         "uid": "$server"
       },
       "editable": true,
@@ -945,10 +970,12 @@
           "datasource": {
             "uid": "$server"
           },
-          "expr": "sum(elasticsearch_indices_docs{cluster=~\"$cluster\"})",
+          "editorMode": "code",
+          "expr": "sum(elasticsearch_indices_docs{cluster=~\"$cluster\"}) by (instance,cluster,name)",
           "format": "time_series",
           "intervalFactor": 2,
-          "legendFormat": "Documents",
+          "legendFormat": "{{instance}} => {{cluster}} => {{name}}",
+          "range": true,
           "refId": "A",
           "step": 240
         }
@@ -970,12 +997,14 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:604",
           "format": "short",
           "logBase": 1,
           "min": 0,
           "show": true
         },
         {
+          "$$hashKey": "object:605",
           "format": "short",
           "logBase": 1,
           "show": true
@@ -991,6 +1020,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": {
+        "type": "prometheus",
         "uid": "$server"
       },
       "editable": true,
@@ -1037,10 +1067,12 @@
           "datasource": {
             "uid": "$server"
           },
-          "expr": "sum(elasticsearch_indices_store_size_bytes{cluster=~\"$cluster\"})",
+          "editorMode": "code",
+          "expr": "sum(elasticsearch_indices_store_size_bytes{cluster=~\"$cluster\"}) by (instance)",
           "format": "time_series",
           "intervalFactor": 2,
-          "legendFormat": "Index Size",
+          "legendFormat": "{{instance}}: Index Size",
+          "range": true,
           "refId": "A",
           "step": 240
         }
@@ -1062,12 +1094,14 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:687",
           "format": "bytes",
           "logBase": 1,
           "min": 0,
           "show": true
         },
         {
+          "$$hashKey": "object:688",
           "format": "short",
           "logBase": 1,
           "show": true
@@ -1141,7 +1175,7 @@
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
-          "legendFormat": "{{name}}: {{path}}",
+          "legendFormat": "{{instance}}: {{path}}",
           "metric": "",
           "range": true,
           "refId": "A",
@@ -1971,10 +2005,10 @@
           },
           "dsType": "elasticsearch",
           "editorMode": "code",
-          "expr": "avg(irate(elasticsearch_process_cpu_seconds_total{cluster=~\"$cluster\"}[60s])) by(mode) *100",
+          "expr": "avg(irate(elasticsearch_process_cpu_seconds_total{cluster=~\"$cluster\"}[60s])) by(mode, instance) *100",
           "format": "time_series",
           "intervalFactor": 2,
-          "legendFormat": "{{ mode }}",
+          "legendFormat": "{{instance}} {{ mode }}",
           "metric": "elasticsearch_breakers_tripped",
           "metrics": [
             {
@@ -2385,6 +2419,6 @@
   "timezone": "utc",
   "title": "Elasticsearch Cluster",
   "uid": "d4f826fb-865f-474b-a372-6696071fb709",
-  "version": 10,
+  "version": 12,
   "weekStart": ""
 }

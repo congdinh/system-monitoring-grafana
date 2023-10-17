@@ -1145,10 +1145,10 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "rate(elasticsearch_indices_search_fetch_total{}[1h])",
+          "expr": "(rate(elasticsearch_indices_search_fetch_total{}[1h]))",
           "format": "time_series",
           "intervalFactor": 1,
-          "legendFormat": "{{name}}",
+          "legendFormat": "{{instance}} => {{cluster}} => {{name}}",
           "range": true,
           "refId": "A"
         }
@@ -1355,7 +1355,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1394,12 +1395,12 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "avg(irate(elasticsearch_process_cpu_seconds_total{}[60s])) by(cluster) *100",
+          "expr": "avg(irate(elasticsearch_process_cpu_seconds_total{}[60s])) by(instance, cluster) *100",
           "format": "time_series",
           "instant": false,
           "interval": "",
           "intervalFactor": 2,
-          "legendFormat": "__auto",
+          "legendFormat": "{{instance}}",
           "metric": "",
           "refId": "A",
           "step": 20
@@ -1588,7 +1589,7 @@
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
-          "legendFormat": "{{name}}: {{path}}",
+          "legendFormat": "{{instance}}: {{path}}",
           "metric": "",
           "range": true,
           "refId": "A",
@@ -3048,6 +3049,6 @@
   "timezone": "browser",
   "title": "Cluster Monitoring",
   "uid": "e9e6f980-ad9e-4626-a954-a8f41eddc80e",
-  "version": 35,
+  "version": 36,
   "weekStart": ""
 }

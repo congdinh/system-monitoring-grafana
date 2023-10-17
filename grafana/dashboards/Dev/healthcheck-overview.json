@@ -66,10 +66,7 @@
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "decimals": 0,
           "pattern": "Value",
-          "thresholds": [
-            "0",
-            "1"
-          ],
+          "thresholds": ["0", "1"],
           "type": "number",
           "unit": "short"
         },
@@ -252,10 +249,7 @@
           "dateFormat": "YYYY-MM-DD HH:mm:ss",
           "decimals": 0,
           "pattern": "Value",
-          "thresholds": [
-            "0",
-            "2592000"
-          ],
+          "thresholds": ["0", "2592000"],
           "type": "number",
           "unit": "s"
         },
@@ -474,10 +468,7 @@
   "refresh": "5s",
   "schemaVersion": 38,
   "style": "dark",
-  "tags": [
-    "blackbox",
-    "prometheus"
-  ],
+  "tags": ["blackbox", "prometheus"],
   "templating": {
     "list": [
       {
@@ -614,21 +605,11 @@
       "2h",
       "1d"
     ],
-    "time_options": [
-      "5m",
-      "15m",
-      "1h",
-      "6h",
-      "12h",
-      "24h",
-      "2d",
-      "7d",
-      "30d"
-    ]
+    "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]
   },
   "timezone": "",
   "title": "HealthCheck Quick Overview",
   "uid": "xtkCtBkiz",
-  "version": 3,
+  "version": 4,
   "weekStart": ""
 }
