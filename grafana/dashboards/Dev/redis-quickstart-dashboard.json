@@ -1289,10 +1289,9 @@
     "list": [
       {
         "current": {
-          "isNone": true,
           "selected": false,
-          "text": "None",
-          "value": ""
+          "text": "redis_cache_175",
+          "value": "redis_cache_175"
         },
         "datasource": {
           "uid": "${datasource}"
@@ -1364,6 +1363,6 @@
   "timezone": "browser",
   "title": "Redis Exporter Quickstart and Dashboard",
   "uid": "bRd48yKMdd",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }
