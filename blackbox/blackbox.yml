@@ -11,3 +11,14 @@ modules:
         - HTTP/2.0
     prober: http
     timeout: 15s
+  tcp_connect:
+    tcp:
+      ip_protocol_fallback: false
+      preferred_ip_protocol: ip4
+      tls: false
+      tls_config:
+        insecure_skip_verify: true
+        server_name: "grafana"
+    prober: tcp
+    timeout: 15s
+

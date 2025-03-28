@@ -3,7 +3,7 @@ groups:
   - name: MongoDB
     rules:
       - alert: MongodbDown
-        expr: mongodb_up == 0
+        expr: mongodb_up == 0 OR absent(mongodb_up) == 1
         for: 0m
         labels:
           severity: critical
@@ -55,3 +55,19 @@ groups:
         annotations:
           summary: MongoDB virtual memory usage (instance {{ $labels.instance }})
           description: "High memory usage\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      - alert: MongodbReplicationLag
+        expr: (mongodb_rs_members_optimeDate{member_state="PRIMARY"} - on (set) group_right mongodb_rs_members_optimeDate{member_state="SECONDARY"}) / 1000 > 15
+        for: 0m
+        labels:
+          severity: warning
+        annotations:
+          summary: MongoDB replication lag (instance {{ $labels.instance }})
+          description: "Mongodb replication lag is more than 15s\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      - alert: MongoDBPrimaryStateChanged
+        expr: mongodb_rs_members_state{member_idx="10.130.217.228:27017", member_state="PRIMARY"} != 1
+        for: 0m
+        labels:
+          severity: critical
+        annotations:
+          summary: 'MongoDB Primary State Was Changed (instance {{ $labels.instance }})'
+          description: 'The MongoDB member 10.130.217.228:27017 is not in the PRIMARY state.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}'

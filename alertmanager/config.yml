@@ -1,23 +1,21 @@
 global:
   resolve_timeout: 1m
   # Channel system_logs
-  # slack_api_url: "https://hooks.slack.com/services/"
-  # Channel meta_bots - replace your slack webhook url
-  slack_api_url: "https://hooks.slack.com/services/"
-
+  slack_api_url: ""
 route:
   receiver: "slack-notifications"
   group_by: ["alertname", "instance", "cluster", "service", "name"]
-  group_wait: 30s # Wait 30s before sending first notification
-  group_interval: 5m # Interval between sending notifications about new alerts that are added to the group 5m
-  repeat_interval: 10h # Send repeat notifications every 10h
+  group_wait: 30s # Thời gian chờ trước khi gửi cảnh báo giải quyết 30s
+  group_interval: 5m # Tần suất kiểm tra giải quyết cảnh báo 5m
+  repeat_interval: 18h # Tần suất gửi lại cảnh báo
+  # Mention slack userId in message text: <@U0566P7UF1Q> <@U03T2BB2Q6M> <@U7TRL8XSQ>
 
 receivers:
   - name: "slack-notifications"
     slack_configs:
-      - channel: "#meta-bots"
+      - channel: "#metabase-bots"
         send_resolved: true
-        title_link: https://grafana...com/alerting/list
+        title_link: https://grafana.namifutures.com/alerting/list
         icon_emoji: ":rocket:"
         title: |-
           {{ if eq .Status "firing" }}:rotating_light: Monitor triggered{{ end }}{{ if eq .Status "resolved" }}:sunglasses: Monitor resolved{{ end }}: {{ .CommonLabels.alertname }}
@@ -30,4 +28,5 @@ receivers:
           *Details:*
             {{ range .Labels.SortedPairs }} • *{{ .Name }}:* `{{ .Value }}`
             {{ end }}
+          {{ if or (eq .Labels.severity "critical") (eq .Labels.severity "page") }} *Attention:* <@U0566P7UF1Q> <@U03T2BB2Q6M> <@U7TRL8XSQ> {{ end }}
           {{ end }}

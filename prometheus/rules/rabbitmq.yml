@@ -1,0 +1,43 @@
+groups:
+  - name: RabbitMQ Healthcheck
+    rules:
+      - alert: RabbitmqDown
+        expr: rabbitmq_up == 0
+        for: 0m
+        labels:
+          severity: critical
+        annotations:
+          summary: Rabbitmq down (instance {{ $labels.instance }})
+          description: "RabbitMQ node down\n VALUE = {{ $value }}\n LABELS = {{ $labels }}"
+      - alert: RabbitmqTooManyMessagesInQueue
+        expr: rabbitmq_queue_messages_ready_global > 1000
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: Rabbitmq too many messages in queue (instance {{ $labels.instance }})
+          description: "Queue is filling up (> 1000 msgs)\n VALUE = {{ $value }}\n LABELS = {{ $labels }}"
+      - alert: RabbitmqOutOfMemory
+        expr: rabbitmq_node_mem_used / rabbitmq_node_mem_limit * 100 > 90
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: Rabbitmq out of memory (instance {{ $labels.instance }})
+          description: "Memory available for RabbitMQ is low (< 10%)\n VALUE = {{ $value }}\n LABELS = {{ $labels }}"
+      - alert: RabbitmqTooManyConnections
+        expr: rabbitmq_connections > 1000
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: Rabbitmq too many connections (instance {{ $labels.instance }})
+          description: "The total connections of a node is too high\n VALUE = {{ $value }}\n LABELS = {{ $labels }}"
+      - alert: Too_many_consumers
+        expr: rabbitmq_consumers > 1000
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: High number of consumers (instance {{ $labels.instance }})
+          description: "Consumers are exceeding \n VALUE = >1000 \n LABELS = {{ $labels }}"

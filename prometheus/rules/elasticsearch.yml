@@ -2,6 +2,22 @@
 groups:
   - name: Elasticsearch
     rules:
+      - alert: ElasticsearchDown
+        expr: elasticsearch_node_stats_up == 0
+        for: 0m
+        labels:
+          severity: page
+        annotations:
+          summary: "Elasticsearch down (instance {{ $labels.instance }})"
+          description: "Elasticsearch instance is down on {{ $labels.instance }}\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      - alert: Elasticsearch Disconnect From Monitoring
+        expr: absent(elasticsearch_node_stats_up) == 1
+        for: 0m
+        labels:
+          severity: page
+        annotations:
+          summary: "Please Check Elasticsearch Alive (instance {{ $labels.instance }})"
+          description: "Elasticsearch instance is disconnect on {{ $labels.instance }}\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
       - alert: ElasticsearchHeapUsageTooHigh
         expr: (elasticsearch_jvm_memory_used_bytes{area="heap"} / elasticsearch_jvm_memory_max_bytes{area="heap"}) * 100 > 90
         for: 2m
@@ -47,14 +63,14 @@ groups:
           summary: Elasticsearch Cluster Red (instance {{ $labels.instance }})
           description: "Elastic Cluster Red status\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
-      - alert: ElasticsearchClusterYellow
-        expr: elasticsearch_cluster_health_status{color="yellow"} == 1
-        for: 0m
-        labels:
-          severity: warning
-        annotations:
-          summary: Elasticsearch Cluster Yellow (instance {{ $labels.instance }})
-          description: "Elastic Cluster Yellow status\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      # - alert: ElasticsearchClusterYellow
+      #   expr: elasticsearch_cluster_health_status{color="yellow"} == 1
+      #   for: 0m
+      #   labels:
+      #     severity: warning
+      #   annotations:
+      #     summary: Elasticsearch Cluster Yellow (instance {{ $labels.instance }})
+      #     description: "Elastic Cluster Yellow status\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
       - alert: ElasticsearchInitializingShards
         expr: elasticsearch_cluster_health_initializing_shards > 0

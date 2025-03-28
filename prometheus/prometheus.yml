@@ -155,6 +155,25 @@ scrape_configs:
       #   regex: "redis_exporter_4:9121"
       #   replacement: "redis_cache_4"
 
+  # REDIS With File SD
+  # This is an example of how to use file-based service discovery with Redis.
+  # The file targets/redis-instances-targets.json should contain the list of Redis instances to scrape.
+
+
+  ## config for the multiple Redis targets that the exporter will scrape
+  - job_name: 'redis_exporter'
+    file_sd_configs:
+      - files:
+          - ./targets/redis-instances-targets.json
+    metrics_path: /scrape
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+        regex: (redis://10.10.10.1:6379)
+        replacement: 'redis_cache_1'
+
   # POSTGRES
   - job_name: postgres_exporter
     static_configs:
@@ -179,3 +198,7 @@ scrape_configs:
   #     insecure_skip_verify: true
   #   static_configs:
   #     - targets: ["127.0.0.1:9001"]
+
+  - job_name: 'rabbitmq'
+    static_configs:
+      - targets: ['rabbitmq-exporter:9419']

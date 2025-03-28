@@ -65,13 +65,13 @@ groups:
           description: "The Node Exporter on server {{ $labels.instance }} has more than 90% CPU usage."
 
       - alert: NodeExporterLoadAverage
-        expr: node_load1 > 1
+        expr: node_load1 > 10
         for: 1m
         labels:
           severity: warning
         annotations:
           summary: "Node Exporter load average high (instance {{ $labels.instance }})"
-          description: "The Node Exporter on server {{ $labels.instance }} has more than 1 load average."
+          description: "The Node Exporter on server {{ $labels.instance }} has more than 10 load average."
 
       - alert: NodeExporterDiskIO
         expr: (rate(node_disk_io_time_seconds_total[1m]) * 1000) > 10

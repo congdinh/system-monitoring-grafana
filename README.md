@@ -2,6 +2,8 @@
 
 This repository contains a Docker Compose configuration to set up a monitoring stack using Prometheus, Grafana, Alertmanager, Node Exporter, and Blackbox Exporter.
 
+![](./Monitoring_Diagrams.png)
+
 ## Introduction
 
 This is a monitoring stack using Grafana and Prometheus to monitor your applications and systems. This stack includes the following services:

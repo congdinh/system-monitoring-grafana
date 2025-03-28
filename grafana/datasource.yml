@@ -9,3 +9,5 @@ datasources:
     access: proxy
     editable: true
     basicAuth: false
+    # basicAuthUser: admin
+    # basicAuthPassword: admin

@@ -2,7 +2,7 @@ groups:
   - name: Mysql
     rules:
       - alert: MysqlDown
-        expr: mysql_up == 0
+        expr: mysql_up == 0 OR absent(mysql_up) == 1
         for: 0m
         labels:
           severity: page
